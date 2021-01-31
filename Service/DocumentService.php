@@ -4,10 +4,10 @@ namespace Reconnect\S3Bundle\Service;
 
 
 use Imagick;
+use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\UuidV4;
-use Reconnect\S3Bundle\Adapter\S3Adapter;
 
 class DocumentService
 {
@@ -64,4 +64,10 @@ class DocumentService
             throw $e;
         }
     }
+
+    public function getPreSignedUrl(string $fileKey = null): ?string
+    {
+        return $this->s3Adapter->getPreSignedUrl($fileKey);
+    }
+
 }
