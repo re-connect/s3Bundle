@@ -1,0 +1,27 @@
+{
+  "name": "reconnect/s3bundle",
+  "type": "symfony-bundle",
+  "description": "Symfony S3 Bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thibaut Cheymol",
+      "email": "thibaut.cheymol@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "7.4.*",
+    "league/flysystem-aws-s3-v3": "^2.0",
+    "symfony/http-foundation": "^5.2",
+    "symfony/mime": "^5.2",
+    "symfony/uid": "^5.2",
+    "ext-imagick": "*",
+    "ext-exif": "*",
+    "ext-fileinfo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Reconnect\\S3Bundle\\": ""
+    }
+  }
+}
