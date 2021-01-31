@@ -4,8 +4,8 @@
 namespace Reconnect\S3Bundle;
 
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Reconnect\S3Bundle\DependencyInjection\S3Extension;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class S3Bundle extends Bundle
 {

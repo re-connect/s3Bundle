@@ -12,6 +12,8 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 class S3Extension extends Extension
 {
     /**
+     * @param array            $configs
+     * @param ContainerBuilder $container
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
