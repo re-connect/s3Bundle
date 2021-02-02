@@ -35,6 +35,6 @@ class S3Extension extends Extension
 
     public function getAlias()
     {
-        return 's3_bundle';
+        return 'reconnect_s3_bundle';
     }
 }

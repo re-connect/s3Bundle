@@ -67,8 +67,8 @@ public function upload(DocumentService $documentService): Response
 ## Configuration reference
 
 ```yaml
-# Default configuration for extension with alias: "s3_bundle"
-s3_bundle:
+# Default configuration for extension with alias: "reconnect_s3_bundle"
+reconnect_s3_bundle:
     bucketHost:           ~ # Required
     bucketName:           ~ # Required
     bucketKey:            ~ # Required
