@@ -53,13 +53,14 @@ class DocumentService
 
     /**
      * @param UploadedFile $file
+     * @param ?string      $fileKey
      * @return UuidV4
      * @throws \Exception
      */
-    public function uploadFile(UploadedFile $file): UuidV4
+    public function uploadFile(UploadedFile $file, ?string $fileKey = null): UuidV4
     {
         try {
-            return $this->s3Adapter->putFile($file);
+            return $this->s3Adapter->putFile($file, $fileKey);
         } catch (\Exception $e) {
             throw $e;
         }

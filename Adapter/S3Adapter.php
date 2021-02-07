@@ -51,14 +51,15 @@ class S3Adapter
     }
 
     /**
-     * @param File $file
+     * @param File    $file
+     * @param ?string $fileKey
      * @return UuidV4
      * @throws \Exception
      */
-    public function putFile(File $file): UuidV4
+    public function putFile(File $file, ?string $fileKey = null): UuidV4
     {
         try {
-            $key = Uuid::v4();
+            $key = null === $fileKey ? Uuid::v4() : $fileKey;
             $stream = fopen($file->getPathname(), 'r');
             $this->client->putObject([
                 'Bucket' => 'axel',
