@@ -6,7 +6,7 @@
     <services>
         <service id="s3_bundle.s3_adapter" class="Reconnect\S3Bundle\Adapter\S3Adapter" public="false">
         </service>
-        <service id="FlysystemS3Client" public="true">
+        <service id="Reconnect\S3Bundle\Service\FlysystemS3Client" public="true">
             <argument type="service" id="Reconnect\S3Bundle\Adapter\S3Adapter"/>
             <argument type="service" id="Reconnect\S3Bundle\Service\PdfService"/>
         </service>
