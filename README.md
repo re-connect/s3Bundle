@@ -1,7 +1,7 @@
 # S3Bundle
 
-S3Bundle helps you connect you Symfony application to a S3 bucket, or any bucket that implements S3 API.
-It is a wrapper around the great `league/flysystem-aws-s3-v3` library
+S3Bundle helps you connect you Symfony application to a S3 bucket, or any bucket that implements S3 API. It is a wrapper
+around the great `league/flysystem-aws-s3-v3` library
 
 ## Installation
 
@@ -27,41 +27,35 @@ Then, you can inject the `DocumentService.php` to do some common operations on b
 ### Fetching a document presigned URL
 
 ```php
-// DocumentController.php
 use Reconnect\S3Bundle\Service\DocumentService;
 // ...
-/**
- * @Route("/documents/${objectKey}/show", name="show_document")
- */
-public function show(string $objectKey, DocumentService $documentService): Response
+private DocumentService $documentService;
+
+public function __construct(DocumentService $s3Adapter)
 {
-    // The $objectKey is the key we used ou
-    $presignedUrl = $documentService->getPresignedUrl($objectKey);
-    return $this->render('document/show.html.twig', [
-        'url' => $presignedUrl,
-    ]);
+    $this->documentService = $documentService;
 }
+// ...
+// The  $objectKey is the key we used to identify the file in the bucket
+$presignedUrl = $documentService->getPresignedUrl($objectKey);
 ```
 
 ### Posting a document
 
 ```php
-// DocumentController.php
 use Reconnect\S3Bundle\Service\DocumentService;
 // ...
-/**
- * @Route("/documents/${objectKey}/show", name="show_document")
- */
-public function upload(DocumentService $documentService): Response
+private DocumentService $documentService;
+
+public function __construct(DocumentService $s3Adapter)
 {
-    // Handle Form submit for a $form containing a file field
-    // ...
-    // Get this file, it is an instance of UploadedFile
-    $file = $form->getData()->getFile();
-    // This method returns the key of the uploaded file in the bucket
-    // This $key is a random UuidV4
-    $key = $documentService->uploadFile($file);
+    $this->documentService = $documentService;
 }
+// ...
+// Get a file as an instance of UploadedFile
+// This method returns the key of the uploaded file in the bucket
+// This $key is a random UuidV4
+$key = $documentService->uploadFile($file);
 ```
 
 ## Configuration reference
@@ -69,8 +63,8 @@ public function upload(DocumentService $documentService): Response
 ```yaml
 # Default configuration for extension with alias: "reconnect_s3_bundle"
 reconnect_s3_bundle:
-    bucketHost:           ~ # Required
-    bucketName:           ~ # Required
-    bucketKey:            ~ # Required
-    bucketSecret:         ~ # Required
+    bucketHost: ~ # Required
+    bucketName: ~ # Required
+    bucketKey: ~ # Required
+    bucketSecret: ~ # Required
 ```
