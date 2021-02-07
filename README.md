@@ -58,6 +58,26 @@ public function __construct(DocumentService $s3Adapter)
 $key = $documentService->uploadFile($file);
 ```
 
+### Generating a thumbnail
+
+You can also generate a thumbnail, it handles images and pdfs
+
+```php
+use Reconnect\S3Bundle\Service\DocumentService;
+// ...
+private DocumentService $documentService;
+
+public function __construct(DocumentService $s3Adapter)
+{
+    $this->documentService = $documentService;
+}
+// ...
+// Get a file as an instance of UploadedFile
+// This method returns the key of the uploaded thumbnail file in the bucket
+// This $key is a random UuidV4
+$thumbnailKey = $documentService->generateThumbnail($file);
+```
+
 ## Configuration reference
 
 ```yaml

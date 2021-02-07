@@ -8,6 +8,7 @@ use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\UuidV4;
+use function exif_imagetype;
 
 class DocumentService
 {
@@ -22,31 +23,27 @@ class DocumentService
 
     /**
      * @param File   $file
-     * @param string $fileName
-     * @return string|null
+     * @return UuidV4|null
      * @throws \ImagickException|\Exception
      */
-    public function generateThumbnail(File $file, string $fileName): ?string
+    public function generateThumbnail(File $file): ?UuidV4
     {
-        $thumbnailKey = null;
-        $fileIsImage = exif_imagetype($file->getPathname());
         $originalFilename = $file instanceof UploadedFile ? $file->getClientOriginalName() : $originalFilename = $file->getFilename();
+        $thumbnailName = 'thumbnail-'.$originalFilename;
         if ('application/pdf' === $file->getMimeType()) {
-            $thumbnailName = 'thumbnail-'.$fileName;
-            $thumbnailPath = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName.'.jpeg');
-            $thumbnailFile = new File($thumbnailPath);
-            $thumbnailKey = $this->s3Adapter->putFile($thumbnailFile);
-            unlink($thumbnailFile);
-        } elseif ($fileIsImage) {
-            $thumbnailName = 'thumbnail-'.$originalFilename;
+            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName.'.jpeg');
+        } elseif (exif_imagetype($file->getPathname())) {
             $im = new Imagick();
             $im->readImage($file);
             $im->thumbnailImage(400, 164, true);
             $im->writeImage($thumbnailName);
-            $thumbnailFile = new File($thumbnailName);
-            $thumbnailKey = $this->s3Adapter->putFile($thumbnailFile);
-            unlink($thumbnailFile);
+        } else {
+            return null;
         }
+
+        $thumbnailFile = new File($thumbnailName);
+        $thumbnailKey = $this->s3Adapter->putFile($thumbnailFile);
+        unlink($thumbnailFile);
 
         return $thumbnailKey;
     }
