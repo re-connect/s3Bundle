@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\UuidV4;
 use function exif_imagetype;
 
-class DocumentService
+class FlysystemS3Client
 {
     private S3Adapter $s3Adapter;
     private PdfService $pdfService;

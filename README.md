@@ -22,40 +22,40 @@ BUCKET_KEY=files_access
 BUCKET_SECRET=files_secret
 ```
 
-Then, you can inject the `DocumentService.php` to do some common operations on buckets, such as :
+Then, you can inject the `FlysystemS3Client.php` to do some common operations on buckets, such as :
 
 ### Fetching a document presigned URL
 
 ```php
-use Reconnect\S3Bundle\Service\DocumentService;
+use Reconnect\S3Bundle\Service\FlysystemS3Client;
 // ...
-private DocumentService $documentService;
+private FlysystemS3Client $S3Client;
 
-public function __construct(DocumentService $s3Adapter)
+public function __construct(FlysystemS3Client $s3Adapter)
 {
-    $this->documentService = $documentService;
+    $this->documentService = $S3Client;
 }
 // ...
 // The  $objectKey is the key we used to identify the file in the bucket
-$presignedUrl = $documentService->getPresignedUrl($objectKey);
+$presignedUrl = $S3Client->getPresignedUrl($objectKey);
 ```
 
 ### Posting a document
 
 ```php
-use Reconnect\S3Bundle\Service\DocumentService;
+use Reconnect\S3Bundle\Service\FlysystemS3Client;
 // ...
-private DocumentService $documentService;
+private FlysystemS3Client $S3Client;
 
-public function __construct(DocumentService $s3Adapter)
+public function __construct(FlysystemS3Client $s3Adapter)
 {
-    $this->documentService = $documentService;
+    $this->documentService = $S3Client;
 }
 // ...
 // Get a file as an instance of File
 // This method returns the key of the uploaded file in the bucket
 // This $key is a random UuidV4
-$key = $documentService->uploadFile($file);
+$key = $S3Client->uploadFile($file);
 ```
 
 ### Generating a thumbnail
@@ -63,19 +63,19 @@ $key = $documentService->uploadFile($file);
 You can also generate a thumbnail, it handles images and pdfs
 
 ```php
-use Reconnect\S3Bundle\Service\DocumentService;
+use Reconnect\S3Bundle\Service\FlysystemS3Client;
 // ...
-private DocumentService $documentService;
+private FlysystemS3Client $S3Client;
 
-public function __construct(DocumentService $s3Adapter)
+public function __construct(FlysystemS3Client $s3Adapter)
 {
-    $this->documentService = $documentService;
+    $this->documentService = $S3Client;
 }
 // ...
 // Get a file as an instance of UploadedFile
 // This method returns the key of the uploaded thumbnail file in the bucket
 // This $key is a random UuidV4
-$thumbnailKey = $documentService->generateThumbnail($file);
+$thumbnailKey = $S3Client->generateThumbnail($file);
 ```
 
 ## Configuration reference
