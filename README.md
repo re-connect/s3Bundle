@@ -52,7 +52,7 @@ public function __construct(DocumentService $s3Adapter)
     $this->documentService = $documentService;
 }
 // ...
-// Get a file as an instance of UploadedFile
+// Get a file as an instance of File
 // This method returns the key of the uploaded file in the bucket
 // This $key is a random UuidV4
 $key = $documentService->uploadFile($file);

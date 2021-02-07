@@ -22,7 +22,7 @@ class DocumentService
     }
 
     /**
-     * @param File   $file
+     * @param File $file
      * @return UuidV4|null
      * @throws \ImagickException|\Exception
      */
@@ -49,12 +49,12 @@ class DocumentService
     }
 
     /**
-     * @param UploadedFile $file
-     * @param ?string      $fileKey
+     * @param File    $file
+     * @param ?string $fileKey
      * @return UuidV4
      * @throws \Exception
      */
-    public function uploadFile(UploadedFile $file, ?string $fileKey = null): UuidV4
+    public function uploadFile(File $file, ?string $fileKey = null): UuidV4
     {
         try {
             return $this->s3Adapter->putFile($file, $fileKey);
