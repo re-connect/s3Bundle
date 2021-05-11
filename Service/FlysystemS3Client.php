@@ -3,12 +3,14 @@
 namespace Reconnect\S3Bundle\Service;
 
 
+use Aws\Result;
+use Cocur\Slugify\Slugify;
 use Imagick;
 use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Uid\UuidV4;
-use function exif_imagetype;
 
 class FlysystemS3Client
 {
@@ -22,8 +24,6 @@ class FlysystemS3Client
     }
 
     /**
-     * @param File $file
-     * @return UuidV4|null
      * @throws \ImagickException|\Exception
      */
     public function generateThumbnail(File $file): ?UuidV4
@@ -49,23 +49,44 @@ class FlysystemS3Client
     }
 
     /**
-     * @param File    $file
-     * @param ?string $fileKey
-     * @return UuidV4
      * @throws \Exception
      */
     public function uploadFile(File $file, ?string $fileKey = null): UuidV4
     {
-        try {
-            return $this->s3Adapter->putFile($file, $fileKey);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return $this->s3Adapter->putFile($file, $fileKey);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function downloadFile(string $fileKey, string $tempUri, ?string $bucketName = null): Result
+    {
+        return $this->s3Adapter->download($fileKey, $tempUri, $bucketName);
     }
 
     public function getPreSignedUrl(string $fileKey = null): ?string
     {
         return $this->s3Adapter->getPreSignedUrl($fileKey);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): UuidV4
+    {
+        return $this->s3Adapter->copyFileFromOtherBucket($otherBucketName, $otherBucketKey);
+    }
+
+    public function getDownloadablePresignedUrl(string $fileKey, string $originalFileName, string $fileMimeType): string
+    {
+        $explodedFileName = explode('.', (new Slugify())->slugify($originalFileName));
+        $extension = count($explodedFileName) > 1
+            ? end($explodedFileName)
+            : (new MimeTypes())->getExtensions($fileMimeType)[0];
+
+        $fileName = sprintf('%s.%s', $explodedFileName[0], $extension);
+
+        return $this->s3Adapter->getDownloadablePresignedUrl($fileKey, $fileMimeType, $fileName);
     }
 
 }

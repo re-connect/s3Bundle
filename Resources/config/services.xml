@@ -2,7 +2,7 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services
-        http://symfony.com/schema/dic/services/services-1.0.xsd">
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="s3_bundle.s3_adapter" class="Reconnect\S3Bundle\Adapter\S3Adapter" public="false">
         </service>
@@ -11,6 +11,6 @@
             <argument type="service" id="Reconnect\S3Bundle\Service\PdfService"/>
         </service>
         <service id="Reconnect\S3Bundle\Service\PdfService" public="false"/>
-        <service id="Reconnect\S3Bundle\Adapter\S3Adapter" alias="s3_bundle.s3_adapter"/>
+        <service id="Reconnect\S3Bundle\Adapter\S3Adapter" public="false" alias="s3_bundle.s3_adapter"/>
     </services>
 </container>
