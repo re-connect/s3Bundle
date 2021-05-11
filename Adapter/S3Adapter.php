@@ -4,17 +4,16 @@
 namespace Reconnect\S3Bundle\Adapter;
 
 use Aws\Result;
-use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Mime\MimeTypes;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV4;
 
 class S3Adapter
 {
     private S3Client $client;
-    private MimeTypes $mimeTypes;
     private string $bucketName;
 
     public function __construct(string $bucketHost, string $bucketName, string $bucketKey, string $bucketSecret)
@@ -29,7 +28,6 @@ class S3Adapter
             'region' => 'eu-west-1',
             'version' => 'latest',
         ]);
-        $this->mimeTypes = new MimeTypes();
         $this->bucketName = $bucketName;
     }
 
@@ -38,63 +36,75 @@ class S3Adapter
         if (null === $fileKey) {
             return null;
         }
-        try {
-            $command = $this->client->getCommand('GetObject', [
-                'Bucket' => $this->bucketName,
-                'Key' => $fileKey,
-            ]);
+        $command = $this->client->getCommand('GetObject', [
+            'Bucket' => $this->bucketName,
+            'Key' => $fileKey,
+        ]);
 
-            return (string) $this->client->createPresignedRequest($command, '+10 minutes')->getUri();
-        } catch (S3Exception $e) {
-            return null;
-        }
+        return (string) $this->client->createPresignedRequest($command, '+10 minutes')->getUri();
     }
 
     /**
-     * @param File    $file
-     * @param ?string $fileKey
-     * @return UuidV4
      * @throws \Exception
      */
     public function putFile(File $file, ?string $fileKey = null): UuidV4
     {
-        try {
-            $key = null === $fileKey ? Uuid::v4() : $fileKey;
-            $stream = fopen($file->getPathname(), 'r');
-            $this->client->putObject([
-                'Bucket' => $this->bucketName,
-                'Key' => $key,
-                'Body' => $stream,
-                'ContentType' => $file->getMimeType(),
-                'ACL' => 'public-read',
-            ]);
-            fclose($stream);
+        $key = null === $fileKey ? Uuid::v4() : $fileKey;
+        $stream = fopen($file->getPathname(), 'r');
+        $this->client->putObject([
+            'Bucket' => $this->bucketName,
+            'Key' => $key,
+            'Body' => $stream,
+            'ContentType' => $file->getMimeType(),
+            'ACL' => 'public-read',
+        ]);
+        fclose($stream);
 
-            return $key;
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return $key;
     }
 
     /**
-     * @param string      $key
-     * @param string      $tempUri
-     * @param string|null $bucketName
-     * @return Result
      * @throws \Exception
      */
-    public function download(string $key, string $tempUri, string $bucketName = null): Result
+    public function download(string $key, string $tempUri, ?string $bucketName = null): Result
     {
-        try {
-            $bucketName = $bucketName ?? $this->bucketName;
+        $bucketName = $bucketName ?? $this->bucketName;
 
-            return $this->client->getObject([
-                'Bucket' => $bucketName,
-                'Key' => $key,
-                'SaveAs' => $tempUri,
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return $this->client->getObject([
+            'Bucket' => $bucketName,
+            'Key' => $key,
+            'SaveAs' => $tempUri,
+        ]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): UuidV4
+    {
+        $key = Uuid::v4();
+        $this->client->copyObject([
+            'Bucket' => $this->bucketName,
+            'Key' => $key,
+            'CopySource' => $otherBucketName.'/'.$otherBucketKey,
+        ]);
+
+        return $key;
+    }
+
+    public function getDownloadablePresignedUrl(string $key, string $contentType, string $fileName): string {
+        $disposition = HeaderUtils::makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $fileName,
+        );
+
+        $command = $this->client->getCommand('GetObject', [
+            'Bucket' => $this->bucketName,
+            'Key' => $key,
+            'ResponseContentType' => $contentType,
+            'ResponseContentDisposition' => $disposition,
+        ]);
+
+        return (string) $this->client->createPresignedRequest($command, '+10 minutes')->getUri();
     }
 }
