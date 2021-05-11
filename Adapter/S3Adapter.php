@@ -62,7 +62,7 @@ class S3Adapter
             $key = null === $fileKey ? Uuid::v4() : $fileKey;
             $stream = fopen($file->getPathname(), 'r');
             $this->client->putObject([
-                'Bucket' => 'axel',
+                'Bucket' => $this->bucketName,
                 'Key' => $key,
                 'Body' => $stream,
                 'ContentType' => $file->getMimeType(),
