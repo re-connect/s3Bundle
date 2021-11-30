@@ -33,7 +33,7 @@ class S3Extension extends Extension
         ]);
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'reconnect_s3_bundle';
     }
