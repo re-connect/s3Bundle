@@ -10,18 +10,18 @@
     }
   ],
   "require": {
-    "php": ">=7.4.0",
-    "league/flysystem-aws-s3-v3": "^2.0",
-    "symfony/http-foundation": "^4.4|^5.4|^6.0",
-    "symfony/mime": "^4.4|^5.4|^6.0",
-    "ext-imagick": "*",
+    "cocur/slugify": "^4.0",
     "ext-exif": "*",
     "ext-fileinfo": "*",
-    "symfony/http-kernel": "^4.4|^5.4|^6.0",
+    "ext-imagick": "*",
+    "league/flysystem-aws-s3-v3": "^2.0|^3.0",
+    "php": ">=7.4.0",
     "symfony/config": "^4.4|^5.4|^6.0",
-    "symfony/uid": "^4.4|^5.4|^6.0",
     "symfony/dependency-injection": "^4.4|^5.4|^6.0",
-    "cocur/slugify": "^4.0"
+    "symfony/http-foundation": "^4.4|^5.4|^6.0",
+    "symfony/http-kernel": "^4.4|^5.4|^6.0",
+    "symfony/mime": "^4.4|^5.4|^6.0",
+    "symfony/uid": "^4.4|^5.4|^6.0"
   },
   "autoload": {
     "psr-4": {
