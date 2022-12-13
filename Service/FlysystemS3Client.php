@@ -80,13 +80,14 @@ class FlysystemS3Client
     public function getDownloadablePresignedUrl(string $fileKey, string $originalFileName, string $fileMimeType): string
     {
         $explodedFileName = explode('.', (new Slugify())->slugify($originalFileName));
+        $mimes = (new MimeTypes())->getExtensions($fileMimeType);
+
         $extension = count($explodedFileName) > 1
             ? end($explodedFileName)
-            : (new MimeTypes())->getExtensions($fileMimeType)[0];
+            : (count($mimes) > 0 ? $mimes[0] : null);
 
-        $fileName = sprintf('%s.%s', $explodedFileName[0], $extension);
+        $fileName = $extension ? sprintf('%s.%s', $explodedFileName[0], $extension) : $originalFileName;
 
         return $this->s3Adapter->getDownloadablePresignedUrl($fileKey, $fileMimeType, $fileName);
     }
-
 }
