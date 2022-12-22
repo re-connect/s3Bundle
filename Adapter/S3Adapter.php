@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Reconnect\S3Bundle\Adapter;
 
 use Aws\Result;
@@ -92,7 +91,8 @@ class S3Adapter
         return $key;
     }
 
-    public function getDownloadablePresignedUrl(string $key, string $contentType, string $fileName): string {
+    public function getDownloadablePresignedUrl(string $key, string $contentType, string $fileName): string
+    {
         $disposition = HeaderUtils::makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $fileName,

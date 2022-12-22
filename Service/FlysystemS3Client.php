@@ -2,14 +2,13 @@
 
 namespace Reconnect\S3Bundle\Service;
 
-
 use Aws\Result;
-use Cocur\Slugify\Slugify;
 use Imagick;
 use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Mime\MimeTypes;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\UuidV4;
 
 class FlysystemS3Client
@@ -29,9 +28,9 @@ class FlysystemS3Client
     public function generateThumbnail(File $file): ?UuidV4
     {
         $originalFilename = $file instanceof UploadedFile ? $file->getClientOriginalName() : $originalFilename = $file->getFilename();
-        $thumbnailName = 'thumbnail-'.$originalFilename;
+        $thumbnailName = 'thumbnail-' . $originalFilename;
         if ('application/pdf' === $file->getMimeType()) {
-            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName.'.jpeg');
+            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName . '.jpeg');
         } elseif (exif_imagetype($file->getPathname())) {
             $im = new Imagick();
             $im->readImage($file);
@@ -79,14 +78,10 @@ class FlysystemS3Client
 
     public function getDownloadablePresignedUrl(string $fileKey, string $originalFileName, string $fileMimeType): string
     {
-        $explodedFileName = explode('.', (new Slugify())->slugify($originalFileName));
-        $mimes = (new MimeTypes())->getExtensions($fileMimeType);
-
-        $extension = count($explodedFileName) > 1
-            ? end($explodedFileName)
-            : (count($mimes) > 0 ? $mimes[0] : null);
-
-        $fileName = $extension ? sprintf('%s.%s', $explodedFileName[0], $extension) : $originalFileName;
+        $fileNameParts = explode('.', $originalFileName, 2);
+        $extension = $fileNameParts[1] ?? (new MimeTypes())->getExtensions($fileMimeType)[0] ?? null;
+        $slug = (new AsciiSlugger())->slug($fileNameParts[0] ?? $originalFileName)->lower()->toString();
+        $fileName = $extension ? sprintf('%s.%s', $slug, $extension) : $slug;
 
         return $this->s3Adapter->getDownloadablePresignedUrl($fileKey, $fileMimeType, $fileName);
     }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Reconnect\S3Bundle\Service;
-
 
 use Imagick;
 

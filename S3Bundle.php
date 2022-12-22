@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Reconnect\S3Bundle;
-
 
 use Reconnect\S3Bundle\DependencyInjection\S3Extension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
