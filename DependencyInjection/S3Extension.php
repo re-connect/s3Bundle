@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Reconnect\S3Bundle\DependencyInjection;
-
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
