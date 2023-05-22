@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV4;
+use function Symfony\Component\String\u;
 
 class S3Adapter
 {
@@ -96,6 +97,7 @@ class S3Adapter
         $disposition = HeaderUtils::makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $fileName,
+            u($fileName)->ascii()->toString(),
         );
 
         $command = $this->client->getCommand('GetObject', [
