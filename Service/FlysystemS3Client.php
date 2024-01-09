@@ -25,7 +25,7 @@ class FlysystemS3Client
     /**
      * @throws \ImagickException|\Exception
      */
-    public function generateThumbnail(File $file): ?UuidV4
+    public function generateThumbnail(File $file): ?string
     {
         $originalFilename = $file instanceof UploadedFile ? $file->getClientOriginalName() : $originalFilename = $file->getFilename();
         $thumbnailName = 'thumbnail-' . $originalFilename;
@@ -50,7 +50,7 @@ class FlysystemS3Client
     /**
      * @throws \Exception
      */
-    public function uploadFile(File $file, ?string $fileKey = null): UuidV4
+    public function uploadFile(File $file, ?string $fileKey = null): string
     {
         return $this->s3Adapter->putFile($file, $fileKey);
     }
@@ -71,7 +71,7 @@ class FlysystemS3Client
     /**
      * @throws \Exception
      */
-    public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): UuidV4
+    public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): string
     {
         return $this->s3Adapter->copyFileFromOtherBucket($otherBucketName, $otherBucketKey);
     }

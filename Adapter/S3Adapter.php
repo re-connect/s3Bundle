@@ -47,9 +47,9 @@ class S3Adapter
     /**
      * @throws \Exception
      */
-    public function putFile(File $file, ?string $fileKey = null): UuidV4
+    public function putFile(File $file, ?string $fileKey = null): string
     {
-        $key = null === $fileKey ? Uuid::v4() : $fileKey;
+        $key = null === $fileKey ? Uuid::v4()->toRfc4122() : $fileKey;
         $stream = fopen($file->getPathname(), 'r');
         $this->client->putObject([
             'Bucket' => $this->bucketName,
@@ -80,9 +80,9 @@ class S3Adapter
     /**
      * @throws \Exception
      */
-    public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): UuidV4
+    public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): string
     {
-        $key = Uuid::v4();
+        $key = Uuid::v4()->toRfc4122();
         $this->client->copyObject([
             'Bucket' => $this->bucketName,
             'Key' => $key,
