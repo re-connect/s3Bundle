@@ -109,4 +109,15 @@ class S3Adapter
 
         return (string) $this->client->createPresignedRequest($command, '+10 minutes')->getUri();
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function deleteFile(string $key): void
+    {
+        $this->client->deleteObject([
+            'Bucket' => $this->bucketName,
+            'Key' => $key,
+        ]);
+    }
 }
