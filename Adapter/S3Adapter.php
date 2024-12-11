@@ -31,7 +31,7 @@ class S3Adapter
         $this->bucketName = $bucketName;
     }
 
-    public function getPreSignedUrl(string $fileKey = null): ?string
+    public function getPreSignedUrl(?string $fileKey = null): ?string
     {
         if (null === $fileKey) {
             return null;

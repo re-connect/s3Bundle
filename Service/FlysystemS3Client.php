@@ -63,7 +63,7 @@ class FlysystemS3Client
         return $this->s3Adapter->download($fileKey, $tempUri, $bucketName);
     }
 
-    public function getPreSignedUrl(string $fileKey = null): ?string
+    public function getPreSignedUrl(?string $fileKey = null): ?string
     {
         return $this->s3Adapter->getPreSignedUrl($fileKey);
     }
