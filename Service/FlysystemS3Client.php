@@ -85,4 +85,12 @@ class FlysystemS3Client
 
         return $this->s3Adapter->getDownloadablePresignedUrl($fileKey, $fileMimeType, $fileName);
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function deleteFile(string $fileKey): void
+    {
+        $this->s3Adapter->deleteFile($fileKey);
+    }
 }
