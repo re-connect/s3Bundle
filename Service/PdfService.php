@@ -6,72 +6,61 @@ use Imagick;
 
 class PdfService
 {
-    /**
-     * @param     $source
-     * @param     $target
-     * @param int $size
-     * @param int $page
-     * @return false|string
-     * @throws \ImagickException
-     */
-    public function generatePdfThumbnail($source, $target, int $size = 256, int $page = 1)
+    public function generatePdfThumbnail(string $source, string $target, int $size = 256, int $page = 1): ?string
     {
-        if (file_exists($source) && !is_dir($source)): // source path must be available and not be a directory
-            if ('application/pdf' != mime_content_type($source)):
-                return false;                // source is not a pdf file returns a failure
-            endif;
+        try {
+            if (!file_exists($source) || is_dir($source) ||'application/pdf' != mime_content_type($source)) {
+                return null;
+            }
 
-            $sepa = '/';                // using '/' as file separation for nfs on linux.
-            $target = dirname($source).$sepa.$target;
-            $size = intval($size);            // only use as integer, default is 256
-            $page = intval($page);            // only use as integer, default is 1
+            $target = dirname($source).'/'.$target; // using '/' as file separation for nfs on linux.
 
-            --$page;                    // default page 1, must be treated as 0 hereafter
+            --$page; // default page 1, must be treated as 0 hereafter
             if ($page < 0) {
-                $page = 0;
-            }            // we cannot have negative values
+                $page = 0; // we cannot have negative values
+            }
 
             $img = new Imagick($source."[$page]"); // [0] = first page, [1] = second page
 
             $imH = $img->getImageHeight();
             $imW = $img->getImageWidth();
             if (0 == $imH) {
-                $imH = 1;
-            }            // if the pdf page has no height use 1 instead
+                $imH = 1; // if the pdf page has no height use 1 instead
+            }
             if (0 == $imW) {
-                $imW = 1;
-            }            // if the pdf page has no width use 1 instead
+                $imW = 1; // if the pdf page has no width use 1 instead
+            }
 
-            $sizR = round($size * (min($imW, $imH) / max($imW, $imH))); // relative pixels of the shorter side
+            $sizR = (int) round($size * (min($imW, $imH) / max($imW, $imH))); // relative pixels of the shorter side
+
+            if ($imH == $imW) { // square page
+                $img->thumbnailimage($size, $size);
+            }
+            if ($imH < $imW) { // landscape page orientation
+                $img->thumbnailimage($size, $sizR);
+            }
+            if ($imH > $imW) { // portrait page orientation
+                $img->thumbnailimage($sizR, $size);
+            }
+
+            if (!is_dir(dirname($target))) { // if not there make target directory
+                mkdir(dirname($target), 0777, true);
+            }
 
             $img->setImageBackgroundColor('white'); // set background color and flatten, it solves background problems for pdfs with alpha channel
             $img = $img->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN); // prevents black zones on transparency in pdf
+
             $img->setimageformat('jpeg');
-
-            if ($imH == $imW) {
-                $img->thumbnailimage($size, $size);
-            }    // square page
-            if ($imH < $imW) {
-                $img->thumbnailimage($size, $sizR);
-            }    // landscape page orientation
-            if ($imH > $imW) {
-                $img->thumbnailimage($sizR, $size);
-            }    // portrait page orientation
-
-            if (!is_dir(dirname($target))) {
-                mkdir(dirname($target), 0777, true);
-            } // if not there make target directory
-
             $img->writeimage($target);
-
             $img->clear();
-            $img->destroy();
 
-            if (file_exists($target)) {
-                return $target;
-            } // return the path to the new file for further processing
-        endif;
+            if (!file_exists($target)) {
+                return null;
+            }
 
-        return false;    // the source file was not available, or Imagick didn't create a file, so returns a failure
+            return $target; // return the path to the new file for further processing
+        } catch (\ImagickException $exception) {
+            return null;
+        }
     }
 }
