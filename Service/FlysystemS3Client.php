@@ -3,13 +3,14 @@
 namespace Reconnect\S3Bundle\Service;
 
 use Aws\Result;
+use Exception;
 use Imagick;
+use ImagickException;
 use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\Uid\UuidV4;
 
 class FlysystemS3Client
 {
@@ -23,7 +24,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws \ImagickException|\Exception
+     * @throws ImagickException|Exception
      */
     public function generateThumbnail(File $file): ?string
     {
@@ -48,7 +49,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function uploadFile(File $file, ?string $fileKey = null): string
     {
@@ -56,7 +57,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function downloadFile(string $fileKey, string $tempUri, ?string $bucketName = null): Result
     {
@@ -69,7 +70,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): string
     {
@@ -87,7 +88,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function deleteFile(string $fileKey): void
     {

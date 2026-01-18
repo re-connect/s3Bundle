@@ -81,10 +81,28 @@ $thumbnailKey = $S3Client->generateThumbnail($file);
 ## Configuration reference
 
 ```yaml
-# Default configuration for extension with alias: "reconnect_s3_bundle"
-reconnect_s3_bundle:
+# Default configuration for extension with alias: "reconnect_s3"
+reconnect_s3:
     bucketHost: ~ # Required
     bucketName: ~ # Required
     bucketKey: ~ # Required
     bucketSecret: ~ # Required
+```
+
+if you use .env file, you can import values from the env file
+```yaml
+reconnect_s3:
+    bucketHost: '%env(BUCKET_HOST)%'
+    bucketName: '%env(BUCKET_NAME)%'
+    bucketKey: '%env(BUCKET_KEY)%'
+    bucketSecret: '%env(BUCKET_SECRET)%'
+```
+
+and define them in the .env file
+
+```dotenv
+BUCKET_HOST=https://localhost:9000/
+BUCKET_NAME=bucket
+BUCKET_KEY=bucket_key
+BUCKET_SECRET=bucket_secret
 ```
