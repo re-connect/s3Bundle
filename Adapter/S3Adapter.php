@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Uid\UuidV4;
+
 use function Symfony\Component\String\u;
 
 class S3Adapter
@@ -68,7 +68,7 @@ class S3Adapter
      */
     public function download(string $key, string $tempUri, ?string $bucketName = null): Result
     {
-        $bucketName = $bucketName ?? $this->bucketName;
+        $bucketName ??= $this->bucketName;
 
         return $this->client->getObject([
             'Bucket' => $bucketName,

@@ -16,10 +16,10 @@ class ReconnectS3Bundle extends AbstractBundle
     {
         $definition->rootNode()
             ->children()
-               ->scalarNode('bucketHost')->isRequired()->end()
-               ->scalarNode('bucketName')->isRequired()->end()
-               ->scalarNode('bucketKey')->isRequired()->end()
-               ->scalarNode('bucketSecret')->isRequired()->end()
+            ->scalarNode('bucketHost')->isRequired()->end()
+            ->scalarNode('bucketName')->isRequired()->end()
+            ->scalarNode('bucketKey')->isRequired()->end()
+            ->scalarNode('bucketSecret')->isRequired()->end()
             ->end()
         ;
     }
@@ -31,7 +31,8 @@ class ReconnectS3Bundle extends AbstractBundle
             ->arg(1, $config['bucketName'])
             ->arg(2, $config['bucketKey'])
             ->arg(3, $config['bucketSecret'])
-            ->autoconfigure()->autowire();
+            ->autoconfigure()->autowire()
+        ;
 
         $container->services()->set(FlysystemS3Client::class)->autoconfigure()->autowire();
 

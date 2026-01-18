@@ -3,9 +3,6 @@
 namespace Reconnect\S3Bundle\Service;
 
 use Aws\Result;
-use Exception;
-use Imagick;
-use ImagickException;
 use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -24,16 +21,16 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws ImagickException|Exception
+     * @throws \Exception|\ImagickException
      */
     public function generateThumbnail(File $file): ?string
     {
         $originalFilename = $file instanceof UploadedFile ? $file->getClientOriginalName() : $originalFilename = $file->getFilename();
-        $thumbnailName = 'thumbnail-' . $originalFilename;
+        $thumbnailName = 'thumbnail-'.$originalFilename;
         if ('application/pdf' === $file->getMimeType()) {
-            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName . '.jpeg');
+            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName.'.jpeg');
         } elseif (exif_imagetype($file->getPathname())) {
-            $im = new Imagick();
+            $im = new \Imagick();
             $im->readImage($file);
             $im->thumbnailImage(400, 164, true);
             $im->writeImage($thumbnailName);
@@ -49,7 +46,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function uploadFile(File $file, ?string $fileKey = null): string
     {
@@ -57,7 +54,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function downloadFile(string $fileKey, string $tempUri, ?string $bucketName = null): Result
     {
@@ -70,7 +67,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function copyFileFromOtherBucket(string $otherBucketName, string $otherBucketKey): string
     {
@@ -88,7 +85,7 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function deleteFile(string $fileKey): void
     {
