@@ -3,13 +3,11 @@
 namespace Reconnect\S3Bundle\Service;
 
 use Aws\Result;
-use Imagick;
 use Reconnect\S3Bundle\Adapter\S3Adapter;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\Uid\UuidV4;
 
 class FlysystemS3Client
 {
@@ -23,16 +21,16 @@ class FlysystemS3Client
     }
 
     /**
-     * @throws \ImagickException|\Exception
+     * @throws \Exception|\ImagickException
      */
     public function generateThumbnail(File $file): ?string
     {
         $originalFilename = $file instanceof UploadedFile ? $file->getClientOriginalName() : $originalFilename = $file->getFilename();
-        $thumbnailName = 'thumbnail-' . $originalFilename;
+        $thumbnailName = 'thumbnail-'.$originalFilename;
         if ('application/pdf' === $file->getMimeType()) {
-            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName . '.jpeg');
+            $thumbnailName = $this->pdfService->generatePdfThumbnail($file->getPathname(), $thumbnailName.'.jpeg');
         } elseif (exif_imagetype($file->getPathname())) {
-            $im = new Imagick();
+            $im = new \Imagick();
             $im->readImage($file);
             $im->thumbnailImage(400, 164, true);
             $im->writeImage($thumbnailName);

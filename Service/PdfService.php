@@ -2,14 +2,12 @@
 
 namespace Reconnect\S3Bundle\Service;
 
-use Imagick;
-
 class PdfService
 {
     public function generatePdfThumbnail(string $source, string $target, int $size = 256, int $page = 1): ?string
     {
         try {
-            if (!file_exists($source) || is_dir($source) ||'application/pdf' != mime_content_type($source)) {
+            if (!file_exists($source) || is_dir($source) || 'application/pdf' != mime_content_type($source)) {
                 return null;
             }
 
@@ -20,7 +18,7 @@ class PdfService
                 $page = 0; // we cannot have negative values
             }
 
-            $img = new Imagick($source."[$page]"); // [0] = first page, [1] = second page
+            $img = new \Imagick($source."[{$page}]"); // [0] = first page, [1] = second page
 
             $imH = $img->getImageHeight();
             $imW = $img->getImageWidth();
@@ -48,7 +46,7 @@ class PdfService
             }
 
             $img->setImageBackgroundColor('white'); // set background color and flatten, it solves background problems for pdfs with alpha channel
-            $img = $img->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN); // prevents black zones on transparency in pdf
+            $img = $img->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN); // prevents black zones on transparency in pdf
 
             $img->setimageformat('jpeg');
             $img->writeimage($target);
